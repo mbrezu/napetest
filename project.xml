@@ -7,6 +7,9 @@
 	<source path="Source" />
 	
 	<haxelib name="openfl" />
+	<haxelib name="nape" />
+	
+	<haxedef name="NAPE_NO_INLINE" if="neko" />
 	
 	<assets path="Assets" rename="assets" exclude="openfl.svg" />
 	<icon path="Assets/openfl.svg" />
