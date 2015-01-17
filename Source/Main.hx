@@ -37,10 +37,12 @@ class Main extends Sprite {
 		var cbBullet = new CbType();
 		var cbCeiling = new CbType();
 		var cbTarget = new CbType();
+		
 		var ceilingBulletListener = new  InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, cbBullet, cbCeiling, function(ih) {
 			space.bodies.remove(cast(ih.int1, Body));
 		});
 		space.listeners.add(ceilingBulletListener);
+		
 		var targetBulletListener = new  InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, cbBullet, cbTarget, function(ih) {
 			//trace(Type.typeof(ih.int1), ih.int1.isBody());
 			//trace(Type.typeof(ih.int2), ih.int2.isShape());

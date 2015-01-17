@@ -1,0 +1,13 @@
+
+-*- org -*-
+
+* TODO
+** TODO sensors to eliminate objects that escape the stage
+** TODO another 'ship' on the bottom with different controls
+** TODO multiplayer (initial screen, integrate hxmp)
+** TODO link the ships, make them fire when they get closer
+** TODO controller code?
+** TODO make the aliens drop bombs
+** TODO make the aliens follow a pattern around the screen
+** TODO boss?
+
