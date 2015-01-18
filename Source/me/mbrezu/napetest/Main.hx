@@ -74,13 +74,7 @@ class Main extends Sprite {
 		newTargetCd.update(deltaTime);
 		if (newTargetCd.isCool()) {
 			newTargetCd.hot();
-			var target = new Body(BodyType.DYNAMIC, new Vec2(0, r.float(50, context.h - 150)));
-			var targetShape = new Polygon(Polygon.rect( -30, -30, 60, 60));
-			targetShape.material = Material.wood();
-			targetShape.cbTypes.add(context.cbTarget);
-			target.shapes.add(targetShape);
-			context.space.bodies.add(target);
-			target.applyImpulse(new Vec2(200, 0));
+			new EnemyShip(60, r.float(50, context.h - 150), r.float(100, 1000), 0, context);
 		}
 		context.space.step(deltaTime);
 		graphics.clear();

@@ -20,7 +20,7 @@ class PhysContext
 	public var playerGroup(default, null): InteractionGroup;
 	public var enemyGroup(default, null): InteractionGroup;
 	public var cbBullet(default, null): CbType;
-	public var cbCeiling(default, null): CbType;
+	public var cbWall(default, null): CbType;
 	public var cbTarget(default, null): CbType;	
 	public var w(default, null): Float;
 	public var h(default, null): Float;
@@ -34,13 +34,20 @@ class PhysContext
 		enemyGroup = new InteractionGroup(true);
 		
 		cbBullet = new CbType();
-		cbCeiling = new CbType();
+		cbWall = new CbType();
 		cbTarget = new CbType();
 		
-		var ceilingBulletListener = new  InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, cbBullet, cbCeiling, function(ih) {
+		var wallBulletListener = new  InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, cbBullet, cbWall, function(ih) {
+			//trace("ole!", ih.int1);
 			space.bodies.remove(cast(ih.int1, Body));
 		});
-		space.listeners.add(ceilingBulletListener);
+		space.listeners.add(wallBulletListener);
+		
+		var wallTargetListener = new  InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, cbTarget, cbWall, function(ih) {
+			//trace("ole! target", ih.int1);
+			space.bodies.remove(cast(ih.int1, Shape).body);
+		});
+		space.listeners.add(wallTargetListener);
 		
 		var targetBulletListener = new  InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, cbBullet, cbTarget, function(ih) {
 			//trace(Type.typeof(ih.int1), ih.int1.isBody());
@@ -50,12 +57,20 @@ class PhysContext
 		});
 		space.listeners.add(targetBulletListener);
 		
-		var ceiling = new Body(BodyType.STATIC, new Vec2(w / 2, 10));
-		var ceilingShape = new Polygon(Polygon.rect( -w / 2, -5, w, 10));
-		ceilingShape.material = Material.wood();
-		ceiling.shapes.add(ceilingShape);
-		ceiling.cbTypes.add(cbCeiling);
-		space.bodies.add(ceiling);
+		addWall(new Vec2(w / 2, 5), Polygon.rect( -w / 2, -5, w, 10));
+		addWall(new Vec2(w - 5, h / 2), Polygon.rect( -5, -h / 2, 10, h));
+		addWall(new Vec2(5, h / 2), Polygon.rect( -5, -h / 2, 10, h));
+		addWall(new Vec2(w / 2, h - 5), Polygon.rect( -w / 2, -5, w, 10));
+	}
+	
+	private function addWall(center: Vec2, shape: Array<Vec2>) {
+		var wallBody = new Body(BodyType.STATIC, center);
+		var shape = new Polygon(shape);
+		shape.material = Material.wood();
+		shape.sensorEnabled = true;
+		wallBody.shapes.add(shape);
+		wallBody.cbTypes.add(cbWall);
+		space.bodies.add(wallBody);		
 	}
 	
 }
