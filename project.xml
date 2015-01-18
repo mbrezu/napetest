@@ -2,12 +2,20 @@
 <project>
 	
 	<meta title="Napetest" package="com.sample.project" version="1.0.0" company="Company Name" />
-	<app main="Main" path="Export" file="Napetest" />
+	<app main="me.mbrezu.napetest.Main" path="Export" file="Napetest" />
 	
 	<source path="Source" />
 	
 	<haxelib name="openfl" />
 	<haxelib name="nape" />
+	
+	<window hardware="true"
+			width="1024"
+			height="600"
+			fps="30"
+			vsync="true"
+			resizable="false"
+            if="desktop || flash" />
 	
 	<haxedef name="NAPE_NO_INLINE" if="neko" />
 	
