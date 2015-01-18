@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014, Miron Brezuleanu
+Copyright (c) 2015, Miron Brezuleanu
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -23,6 +23,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package me.mbrezu.napetest;
 
+import me.mbrezu.haxisms.Json;
 import me.mbrezu.haxisms.Time.Cooldown;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -65,6 +66,14 @@ class EnemyShip
 			context.space.bodies.add(bullet);
 			bullet.applyImpulse(new Vec2(0, 5));
 			bullet.cbTypes.add(context.cbEnemyBullet);
+			context.addBullet(new Bullet(bullet, 3));
 		}
 	}
+	
+	public function toJson(): JsonValue {
+		var map = new Map<String, JsonValue>();
+		map["x"] = Js.float(Std.int(body.position.x));
+		map["y"] = Js.float(Std.int(body.position.y));
+		return Js.obj(map);
+	}	
 }

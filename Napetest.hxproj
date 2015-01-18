@@ -6,7 +6,7 @@
     <movie input="" />
     <movie path="project.xml" />
     <movie fps="30" />
-    <movie width="800" />
+    <movie width="1024" />
     <movie height="600" />
     <movie version="3" />
     <movie minorVersion="0" />
@@ -30,7 +30,7 @@
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="False" />
-    <option additional="--remap flash:openfl&#xA;#--macro keep(&quot;Main&quot;)" />
+    <option additional="--remap flash:openfl&#xA;#--macro keep(&quot;me.mbrezu.napetest.Main&quot;)" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

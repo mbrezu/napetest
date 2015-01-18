@@ -21,62 +21,29 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 package me.mbrezu.napetest;
 import me.mbrezu.haxisms.Json;
-import nape.geom.Vec2;
+import nape.phys.Body;
 
-class DualShip
+class Bullet
 {
-	var shipLeft: PlayerShip;
-	var shipRight: PlayerShip;
-	var w: Float;
-	var h: Float;
-
-	public function new(w: Float, h: Float, shipLeft: PlayerShip, shipRight: PlayerShip) 
+	public var body(default, null): Body;
+	public var radius(default, null): Float;
+	
+	public function new(body: Body, radius: Float) 
 	{
-		this.w = w;
-		this.h = h;
-		this.shipLeft = shipLeft;
-		this.shipRight = shipRight;
-	}
-	
-	public function update(deltaTime: Float) {
-		shipLeft.update(deltaTime);
-		shipRight.update(deltaTime);
-		var posLeft = shipLeft.body.position;
-		var posRight = shipRight.body.position;
-		var spaceLeft = posLeft.x - 40;
-		var spaceRight = w - 40 - posRight.x;
-		var dist = Math.abs(posRight.x - posLeft.x);
-		if (dist < 80) {
-			var distToRecover = 80 - dist;
-			var dtrLeft = distToRecover / 2;
-			var dtrRight = distToRecover / 2;
-			if (dtrLeft > spaceLeft) {
-				dtrRight += dtrLeft - spaceLeft;
-				dtrLeft = spaceLeft;
-			}
-			if (dtrRight > spaceRight) {
-				dtrLeft += dtrRight - spaceRight;
-				dtrRight = spaceRight;
-			}
-			shipLeft.body.position = new Vec2(posLeft.x - dtrLeft, posLeft.y);
-			shipRight.body.position = new Vec2(posRight.x + dtrRight, posRight.y);
-		}
-	}
-	
-	public function preKeyUp() {
-		shipLeft.preKeyUp();
-		shipRight.preKeyUp();
-	}
-	
-	public function postKeyUp() {
-		shipLeft.postKeyUp();
-		shipRight.postKeyUp();
+		this.body = body;
+		this.radius = radius;
+		body.userData.bullet = this;
 	}
 	
 	public function toJson(): JsonValue {
-		return Js.arr([ shipLeft.toJson(), shipRight.toJson() ]);
+		var map = new Map<String, JsonValue>();
+		map["radius"] = Js.float(radius);
+		map["x"] = Js.float(Std.int(body.position.x));
+		map["y"] = Js.float(Std.int(body.position.y));
+		return Js.obj(map);
 	}
 	
 }

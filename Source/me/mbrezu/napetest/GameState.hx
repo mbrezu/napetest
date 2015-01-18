@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014, Miron Brezuleanu
+Copyright (c) 2015, Miron Brezuleanu
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -22,6 +22,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package me.mbrezu.napetest;
+import me.mbrezu.haxisms.Json;
 import nape.callbacks.CbType;
 import nape.callbacks.CbEvent;
 import nape.dynamics.InteractionGroup;
@@ -53,6 +54,8 @@ class GameState
 	public var gameIsOver(default, null): Bool;
 	
 	private var enemies: Array<EnemyShip>;
+	public var dualShip: DualShip;
+	public var bullets: Array<Bullet>;
 	
 	public function new(w: Float, h: Float) 
 	{
@@ -63,6 +66,7 @@ class GameState
 		playerGroup = new InteractionGroup(true);
 		enemyGroup = new InteractionGroup(true);
 		enemies = new Array<EnemyShip>();
+		bullets = new Array<Bullet>();
 		
 		cbPlayerBullet = new CbType();
 		cbEnemyBullet = new CbType();
@@ -72,12 +76,14 @@ class GameState
 		
 		var wallBulletListener = new  InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, cbPlayerBullet, cbWall, function(ih) {
 			//trace("ole!", ih.int1);
+			bullets.remove(getBody(ih.int1).userData.bullet);
 			space.bodies.remove(getBody(ih.int1));
 		});
 		space.listeners.add(wallBulletListener);
 		
 		var wallBulletListener2 = new  InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, cbEnemyBullet, cbWall, function(ih) {
 			//trace("ole!", ih.int1);
+			bullets.remove(getBody(ih.int1).userData.bullet);
 			space.bodies.remove(getBody(ih.int1));
 		});
 		space.listeners.add(wallBulletListener2);
@@ -92,20 +98,23 @@ class GameState
 			//trace(Type.typeof(ih.int1), ih.int1.isBody());
 			//trace(Type.typeof(ih.int2), ih.int2.isShape());
 			space.bodies.remove(getBody(ih.int1));
+			bullets.remove(getBody(ih.int1).userData.bullet);
 			removeEnemy(getBody(ih.int2));
 		});
 		space.listeners.add(targetBulletListener);
 		
 		var bulletBulletListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, cbEnemyBullet, cbPlayerBullet, function(ih) {
+			bullets.remove(getBody(ih.int1).userData.bullet);
+			bullets.remove(getBody(ih.int2).userData.bullet);
 			space.bodies.remove(getBody(ih.int1));
 			space.bodies.remove(getBody(ih.int2));
 		});
 		space.listeners.add(bulletBulletListener);
 		
 		var playerBulletListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, cbEnemyBullet, cbPlayer, function(ih) {
+			bullets.remove(getBody(ih.int1).userData.bullet);
 			space.bodies.remove(getBody(ih.int1));
 			getBody(ih.int2).userData.ship.hit();
-			trace("ouch");
 		});
 		space.listeners.add(playerBulletListener);
 		
@@ -123,6 +132,10 @@ class GameState
 		wallBody.shapes.add(shape);
 		wallBody.cbTypes.add(cbWall);
 		space.bodies.add(wallBody);		
+	}
+	
+	public function addBullet(b: Bullet) {
+		bullets.push(b);
 	}
 
 	public function addEnemyShip(es: EnemyShip) {
@@ -154,7 +167,18 @@ class GameState
 	
 	public function gameOver() {
 		trace("game over!");
-		gameIsOver = true;
+		if (!gameIsOver) {
+			gameIsOver = true;		
+			trace(Js.stringify(toJson()));
+		}
+	}
+	
+	public function toJson(): JsonValue {
+		var map = new Map<String, JsonValue>();		
+		map["enemies"] = Js.arr(Lambda.array(Lambda.map(enemies, function(enemy) { return enemy.toJson(); } )));
+		map["bullets"] = Js.arr(Lambda.array(Lambda.map(bullets, function(bullet) { return bullet.toJson(); })));
+		map["player"] = dualShip.toJson();
+		return Js.obj(map);
 	}
 
 }

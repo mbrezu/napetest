@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014, Miron Brezuleanu
+Copyright (c) 2015, Miron Brezuleanu
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@ import me.mbrezu.haxisms.Random;
 import me.mbrezu.haxisms.Time.Cooldown;
 import me.mbrezu.haxisms.Time.TimeManager;
 import me.mbrezu.nape.DebugView;
+import me.mbrezu.napetest.view.Data;
 import nape.callbacks.CbEvent;
 import nape.callbacks.CbType;
 import nape.callbacks.InteractionListener;
@@ -70,6 +71,8 @@ class Main extends Sprite {
 			new PlayerShip(w / 3, h - 40, context, keys.keySet1),
 			new PlayerShip(w / 3 * 2, h - 40, context, keys.keySet2));
 			
+		context.dualShip = ship;
+			
 		tm = new TimeManager();
 		newTargetCd = new Cooldown(1).hot();
 		r = new Random();
@@ -106,6 +109,8 @@ class Main extends Sprite {
 		context.update(deltaTime);
 		context.space.step(deltaTime);
 		graphics.clear();
-		DebugView.drawOn(graphics, context.space);
+		var data = new Data(context.toJson());
+		data.draw(graphics);
+		//DebugView.drawOn(graphics, context.space);
 	}
 }

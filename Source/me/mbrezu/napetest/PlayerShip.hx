@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014, Miron Brezuleanu
+Copyright (c) 2015, Miron Brezuleanu
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -23,6 +23,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package me.mbrezu.napetest;
 import haxe.macro.Context;
+import me.mbrezu.haxisms.Json;
 import me.mbrezu.napetest.KeyboardState.KeySet;
 import nape.geom.Vec2;
 import nape.phys.Body;
@@ -71,7 +72,8 @@ class PlayerShip
 		bulletShape.material = Material.wood();
 		context.space.bodies.add(bullet);
 		bullet.applyImpulse(new Vec2(0, -40));
-		bullet.cbTypes.add(context.cbPlayerBullet);				
+		bullet.cbTypes.add(context.cbPlayerBullet);	
+		context.addBullet(new Bullet(bullet, 5));
 	}
 	
 	public function update(deltaTime: Float) {
@@ -99,6 +101,13 @@ class PlayerShip
 		if (oldFirePressed && !keySet.firePressed) {
 			fire();
 		}
+	}
+	
+	public function toJson(): JsonValue {
+		var map = new Map<String, JsonValue>();
+		map["x"] = Js.float(Std.int(body.position.x));
+		map["y"] = Js.float(Std.int(body.position.y));
+		return Js.obj(map);		
 	}
 	
 }
