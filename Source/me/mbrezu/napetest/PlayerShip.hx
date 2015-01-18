@@ -23,6 +23,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package me.mbrezu.napetest;
 import haxe.macro.Context;
+import me.mbrezu.napetest.KeyboardState.KeySet;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -35,8 +36,10 @@ class PlayerShip
 	public var body(default, null): Body;
 	private var context: GameState;
 	private var health: Int;
+	private var keySet: KeySet;
+	private var oldFirePressed: Bool;
 	
-	public function new(x: Float, y: Float, context: GameState) 
+	public function new(x: Float, y: Float, context: GameState, keys: KeySet) 
 	{
 		body = new Body(BodyType.KINEMATIC, new Vec2(x, y));
 		var shipShape = new Polygon(Polygon.regular(40, 40, 5, -Math.PI / 2));
@@ -47,6 +50,7 @@ class PlayerShip
 		this.context = context;
 		health = 5;
 		body.userData.ship = this;
+		this.keySet = keys;
 	}
 	
 	public function hit() {
@@ -59,7 +63,7 @@ class PlayerShip
 		}
 	}
 	
-	public function fire() {
+	private function fire() {
 		var bullet = new Body(BodyType.DYNAMIC, new Vec2(body.position.x, body.position.y - 40));
 		var bulletShape = new Circle(5);
 		bullet.shapes.add(bulletShape);
@@ -70,11 +74,11 @@ class PlayerShip
 		bullet.cbTypes.add(context.cbPlayerBullet);				
 	}
 	
-	public function update(keys: KeyboardState) {
-		if (keys.leftPressed) {
+	public function update(deltaTime: Float) {
+		if (keySet.leftPressed) {
 			body.position.x -= 10;
 		}
-		if (keys.rightPressed) {
+		if (keySet.rightPressed) {
 			body.position.x += 10;
 		}
 		if (body.position.x < 40) {
@@ -84,6 +88,16 @@ class PlayerShip
 		if (body.position.x > context.w - 40) {
 			body.velocity.set(new Vec2(0, 0));
 			body.position.set(new Vec2(context.w - 40, body.position.y));
+		}
+	}
+	
+	public function preKeyUp() {
+		oldFirePressed = keySet.firePressed;
+	}
+	
+	public function postKeyUp() {
+		if (oldFirePressed && !keySet.firePressed) {
+			fire();
 		}
 	}
 	

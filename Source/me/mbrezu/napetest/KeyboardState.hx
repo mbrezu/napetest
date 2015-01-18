@@ -22,40 +22,53 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package me.mbrezu.napetest;
+import me.mbrezu.napetest.KeyboardState.KeySet;
 import openfl.events.Event;
 import openfl.events.KeyboardEvent;
 
-class KeyboardState
-{
+class KeySet {
+	public var leftPressed(default, default): Bool;
+	public var rightPressed(default, default): Bool;
+	public var firePressed(default, default): Bool;
 	
-	public var leftPressed(default, null): Bool;
-	public var rightPressed(default, null): Bool;
-	public var firePressed(default, null): Bool;
-
-	public function new() 
-	{
+	public function new() {
 		leftPressed = false;
 		rightPressed = false;
 		firePressed = false;
 	}
+}
+
+class KeyboardState
+{
+	public var keySet1: KeySet;
+	public var keySet2: KeySet;
+
+	public function new() 
+	{
+		keySet1 = new KeySet();
+		keySet2 = new KeySet();
+	}
 	
 	private function setKeys(evt: KeyboardEvent, value: Bool) {
-		#if !windows
-		var leftKeyCode = 112;
-		var rightKeyCode = 113;
-		var fireKeyCode = 32;
-		#else 
-		var leftKeyCode = 80;
-		var rightKeyCode = 81;
-		var fireKeyCode = 32;
-		#end
+		var left1KeyCode = 80;
+		var right1KeyCode = 81;
+		var fire1KeyCode = 83;
+		var left2KeyCode = 90;
+		var right2KeyCode = 123;
+		var fire2KeyCode = 88;
 
-		if (evt.keyCode == leftKeyCode) {
-			leftPressed = value;
-		} else if (evt.keyCode == rightKeyCode) {
-			rightPressed = value;
-		} else if (evt.keyCode == fireKeyCode) {
-			firePressed = value;
+		if (evt.keyCode == left1KeyCode) {
+			keySet1.leftPressed = value;
+		} else if (evt.keyCode == right1KeyCode) {
+			keySet1.rightPressed = value;
+		} else if (evt.keyCode == fire1KeyCode) {
+			keySet1.firePressed = value;
+		} else if (evt.keyCode == left2KeyCode) {
+			keySet2.leftPressed = value;
+		} else if (evt.keyCode == right2KeyCode) {
+			keySet2.rightPressed = value;
+		} else if (evt.keyCode == fire2KeyCode) {
+			keySet2.firePressed = value;
 		}
 	}
 	
@@ -64,6 +77,7 @@ class KeyboardState
 	}
 	
 	public function handleKeyUp(e: KeyboardEvent) {
+		trace(e.keyCode);
 		setKeys(e, false);
 	}
 	

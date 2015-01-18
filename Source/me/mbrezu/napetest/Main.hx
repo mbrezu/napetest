@@ -52,7 +52,7 @@ class Main extends Sprite {
 	private var r: Random;
 	private var keys: KeyboardState;
 	private var context: GameState;
-	private var ship: PlayerShip;
+	private var ship: DualShip;
 	
 	public function new () {
 		
@@ -63,7 +63,12 @@ class Main extends Sprite {
 		
 		context = new GameState(w, h);
 		
-		ship = new PlayerShip(w / 2, h - 40, context);
+		keys = new KeyboardState();
+		
+		ship = new DualShip(
+			w, h, 
+			new PlayerShip(w / 3, h - 40, context, keys.keySet1),
+			new PlayerShip(w / 3 * 2, h - 40, context, keys.keySet2));
 			
 		tm = new TimeManager();
 		newTargetCd = new Cooldown(1).hot();
@@ -73,18 +78,14 @@ class Main extends Sprite {
 			gameLoop();
 		});
 		
-		keys = new KeyboardState();
-		
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, function (evt) {
 			keys.handleKeyDown(evt);
 		});
 		
 		stage.addEventListener(KeyboardEvent.KEY_UP, function (evt) {
-			var oldFirePressed = keys.firePressed;			
+			ship.preKeyUp();
 			keys.handleKeyUp(evt);
-			if (oldFirePressed && !keys.firePressed) {
-				ship.fire();
-			}
+			ship.postKeyUp();
 		});
 	}	
 	
@@ -93,10 +94,10 @@ class Main extends Sprite {
 		if (deltaTime <= 0) {
 			return;
 		}
-		if (context.gameIsOver) {
-			return;
-		}
-		ship.update(keys);
+		//if (context.gameIsOver) {
+			//return;
+		//}
+		ship.update(deltaTime);
 		newTargetCd.update(deltaTime);
 		if (newTargetCd.isCool()) {
 			newTargetCd.hot();			
