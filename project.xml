@@ -16,8 +16,18 @@
 			vsync="true"
 			resizable="false"
             if="desktop || flash" />
+			
+	<section if="windows">
+        <set name="SHOW_CONSOLE" value="1"/>
+        <haxedef name="SHOW_CONSOLE"/>
+
+        <haxedef name="HXCPP_STACK_TRACE" />
+        <haxedef name="HXCPP_STACK_LINE" />
+        <haxedef name="HXCPP_DEBUG_LINK" />
+    </section>
 	
-	<haxedef name="NAPE_NO_INLINE" if="neko" />
+	<!-- <haxedef name="NAPE_NO_INLINE" if="neko" /> -->
+	<haxedef name="NAPE_NO_INLINE"/>
 	
 	<assets path="Assets" rename="assets" exclude="openfl.svg" />
 	<icon path="Assets/openfl.svg" />

@@ -38,6 +38,9 @@ import nape.shape.Polygon;
 import nape.shape.Shape;
 import nape.space.Space;
 import nape.phys.Material;
+import me.mbrezu.haxisms.Random;
+import me.mbrezu.haxisms.Time.Cooldown;
+import me.mbrezu.haxisms.Time.TimeManager;
 
 class GameState
 {
@@ -54,13 +57,29 @@ class GameState
 	public var gameIsOver(default, null): Bool;
 	
 	private var enemies: Array<EnemyShip>;
-	public var dualShip: DualShip;
-	public var bullets: Array<Bullet>;
+	private var dualShip: DualShip;
+	private var bullets: Array<Bullet>;
+
+	private var tm: TimeManager;
+	private var newTargetCd: Cooldown;
+	private var r: Random;
 	
-	public function new(w: Float, h: Float) 
+	private var keys: KeyboardState;
+
+	public function new(w: Float, h: Float, pkeys: KeyboardState) 
 	{
 		this.w = w;
 		this.h = h;
+				
+		tm = new TimeManager();
+		newTargetCd = new Cooldown(1).hot();
+		r = new Random();
+		
+		keys = pkeys;
+		if (keys == null) {
+			keys = new KeyboardState();
+		}
+		
 		gameIsOver = false;
 		space = new Space(new Vec2(0, 0));
 		playerGroup = new InteractionGroup(true);
@@ -74,6 +93,11 @@ class GameState
 		cbTarget = new CbType();
 		cbPlayer = new CbType();
 		
+		dualShip = new DualShip(
+			w, h, 
+			new PlayerShip(w / 3, h - 40, this, keys.keySet1),
+			new PlayerShip(w / 3 * 2, h - 40, this, keys.keySet2));
+							
 		var wallBulletListener = new  InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, cbPlayerBullet, cbWall, function(ih) {
 			//trace("ole!", ih.int1);
 			bullets.remove(getBody(ih.int1).userData.bullet);
@@ -142,17 +166,29 @@ class GameState
 		enemies.push(es);
 	}
 
-	public function update(deltaTime: Float) {
+	public function update() {
+		var deltaTime = tm.getDeltaTime();
+		if (deltaTime <= 0) {
+			return;
+		}
+		dualShip.update(deltaTime);
+		newTargetCd.update(deltaTime);
+		if (newTargetCd.isCool()) {
+			newTargetCd.hot();			
+			addEnemyShip(new EnemyShip(60, r.float(50, h - 150), r.float(100, 1000), 0, this));
+		}
+
 		for (enemy in enemies) {
 			enemy.update(deltaTime);
 		}
+		space.step(deltaTime);
 	}
 
 	private function removeEnemy(enemyBody: Body) {
 		space.bodies.remove(enemyBody);
-		trace(enemies.length);
+		//trace(enemies.length);
 		enemies.remove(cast(enemyBody.userData.ship, EnemyShip));
-		trace(enemies.length);
+		//trace(enemies.length);
 	}
 	
 	private function getBody(int: Interactor) {
@@ -166,19 +202,18 @@ class GameState
 	}
 	
 	public function gameOver() {
-		trace("game over!");
+		//trace("game over!");
 		if (!gameIsOver) {
 			gameIsOver = true;		
-			trace(Js.stringify(toJson()));
 		}
 	}
 	
 	public function toJson(): JsonValue {
 		var map = new Map<String, JsonValue>();		
 		map["enemies"] = Js.arr(Lambda.array(Lambda.map(enemies, function(enemy) { return enemy.toJson(); } )));
-		map["bullets"] = Js.arr(Lambda.array(Lambda.map(bullets, function(bullet) { return bullet.toJson(); })));
+		map["bullets"] = Js.arr(Lambda.array(Lambda.map(bullets, function(bullet) { return bullet.toJson(); } )));
 		map["player"] = dualShip.toJson();
 		return Js.obj(map);
 	}
-
+	
 }

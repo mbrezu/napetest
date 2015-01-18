@@ -59,7 +59,7 @@ class PlayerShip
 			health --;
 		}
 		if (health == 0) {
-			trace("game over");
+			//trace("game over");
 			context.gameOver();
 		}
 	}

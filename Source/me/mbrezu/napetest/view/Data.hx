@@ -63,6 +63,7 @@ class Data
 		Lambda.iter(js.obj.get("bullets").arr, function(jsBullet) { bullets.push(new Bullet(jsBullet)); } );
 		Lambda.iter(js.obj.get("enemies").arr, function(jsEnemy) { ships.push(new Ship(jsEnemy, true)); } );
 		Lambda.iter(js.obj.get("player").arr, function(jsPlayer) { ships.push(new Ship(jsPlayer, false)); } );
+		//trace("***", bullets.length, ships.length);
 	}
 	
 	public function draw(g: Graphics) {
