@@ -61,6 +61,12 @@ import neko.vm.Thread;
 import cpp.vm.Thread;
 #end
 
+#if neko
+import neko.vm.Mutex;
+#elseif windows
+import cpp.vm.Mutex;
+#end
+
 class ServerState implements IServerState {	
 	
 	private var tm: TimeManager;
@@ -95,11 +101,15 @@ class ServerState implements IServerState {
 class ClientState implements IClientState {
 	private var uiThread: Thread;
 	public var client: Client;
-	public function new(uiThread: Thread) {
+	private var uiMutex: Mutex;
+	public function new(uiThread: Thread, m: Mutex) {
 		this.uiThread = uiThread;
+		uiMutex = m;
 	}
 	public function handleUpdate(update: String): Void {	
-		uiThread.sendMessage(update);
+		uiMutex.acquire();
+		Main.message = update;
+		uiMutex.release();
 	}
 }
 
@@ -128,6 +138,8 @@ class Main extends Sprite {
 	private static inline var COMMANDS_PORT = 12567;
 	private static inline var UPDATES_PORT = 12568;
 	
+	public static var message: String;
+	
 	public function new () {
 		
 		super ();
@@ -136,6 +148,8 @@ class Main extends Sprite {
 		var h = stage.stageHeight;
 		var server = null;
 		var client = null;
+		
+		var m = new Mutex();
 		
 		var btnServer = new Button("Server", function() {
 			if (server == null) {
@@ -147,7 +161,7 @@ class Main extends Sprite {
 		
 		var btnClient = new Button("Client", function() {
 			if (client == null) {
-				var clientState = new ClientState(Thread.current());
+				var clientState = new ClientState(Thread.current(), m);
 				client = new Client("127.0.0.1", COMMANDS_PORT, UPDATES_PORT, clientState);
 				clientState.client = client;
 			}			
@@ -156,29 +170,13 @@ class Main extends Sprite {
 		addChild(btnClient);
 		
 		stage.addEventListener(Event.ENTER_FRAME, function(e) {
-			var counter = 0;
 			var message: String = null;
-			while (true) {
-				//trace("g1");
-				var msg = Thread.readMessage(false);
-				//trace("g2");
-				if (msg == null) {
-					break;
-				}
-				counter ++;
-				message = cast(msg, String);
-				trace(message.length);
-				//trace("g2.1");
-				//trace("g3");
-			}
-			if (counter > 0) {
-				trace(counter);
-			}
+			m.acquire();
+			message = Main.message;
+			m.release();
 			if (message != null) {
 				graphics.clear();
-				//trace("g2.2");
 				var js = Js.parse(new StringReader(message));
-				//trace("g2.3");
 				new Data(js).draw(graphics);					
 			}
 		});
