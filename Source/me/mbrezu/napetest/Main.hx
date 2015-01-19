@@ -157,6 +157,7 @@ class Main extends Sprite {
 		
 		stage.addEventListener(Event.ENTER_FRAME, function(e) {
 			var counter = 0;
+			var message: String = null;
 			while (true) {
 				//trace("g1");
 				var msg = Thread.readMessage(false);
@@ -165,20 +166,20 @@ class Main extends Sprite {
 					break;
 				}
 				counter ++;
-				var message = cast(msg, String);
+				message = cast(msg, String);
 				trace(message.length);
 				//trace("g2.1");
-				if (message != null) {
-					graphics.clear();
-					//trace("g2.2");
-					var js = Js.parse(new StringReader(message));
-					//trace("g2.3");
-					new Data(js).draw(graphics);					
-				}
 				//trace("g3");
 			}
 			if (counter > 0) {
 				trace(counter);
+			}
+			if (message != null) {
+				graphics.clear();
+				//trace("g2.2");
+				var js = Js.parse(new StringReader(message));
+				//trace("g2.3");
+				new Data(js).draw(graphics);					
 			}
 		});
 	}

@@ -12,7 +12,7 @@
 	<window hardware="true"
 			width="1024"
 			height="600"
-			fps="30"
+			fps="60"
 			vsync="true"
 			resizable="false"
             if="desktop || flash" />
