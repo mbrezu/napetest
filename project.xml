@@ -24,6 +24,7 @@
         <haxedef name="HXCPP_STACK_TRACE" />
         <haxedef name="HXCPP_STACK_LINE" />
         <haxedef name="HXCPP_DEBUG_LINK" />
+        <haxedef name="HXCPP_CHECK_POINTER" />
     </section>
 	
 	<!-- <haxedef name="NAPE_NO_INLINE" if="neko" /> -->

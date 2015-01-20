@@ -88,7 +88,7 @@ class ServerState implements IServerState {
 	public function mainLoop(): String {
 		var deltaTime = tm.getDeltaTime();
 		var frameTime = 1.0 / 60.0;
-		trace(deltaTime, frameTime);
+		//trace(deltaTime, frameTime);
 		if (deltaTime < frameTime) {
 			Sys.sleep(frameTime - deltaTime);
 		}
@@ -175,6 +175,7 @@ class Main extends Sprite {
 			message = Main.message;
 			m.release();
 			if (message != null) {
+				trace(message.length);
 				graphics.clear();
 				var js = Js.parse(new StringReader(message));
 				new Data(js).draw(graphics);					
