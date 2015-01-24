@@ -117,8 +117,8 @@ class PlayerShip
 		return Js.obj(map);		
 	}
 	
-	public function chargeBattery() {
-		battery += 0.15;
+	public function chargeBattery(amount: Float) {
+		battery += amount;
 		if (battery > 10) {
 			battery = 10;
 		}

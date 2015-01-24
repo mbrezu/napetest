@@ -70,8 +70,10 @@ class DualShip
 		}
 		var newDist = this.dist();
 		if (newDist < oldDist) {
-			shipLeft.chargeBattery();
-			shipRight.chargeBattery();
+			var diff = oldDist / newDist;
+			var amount = 0.1 * diff * diff;
+			shipLeft.chargeBattery(amount);
+			shipRight.chargeBattery(amount);
 		}
 	}
 	
