@@ -115,9 +115,12 @@ class KeyboardState
 		return result;
 	}
 	
-	public function copyFrom(other: KeyboardState) {
-		keySet1.copyFrom(other.keySet1);
-		keySet2.copyFrom(other.keySet2);
+	public function copyFrom(other: KeyboardState, role: String) {
+		if (role == "1") {
+			keySet1.copyFrom(other.keySet1);
+		} else {
+			keySet2.copyFrom(other.keySet2);
+		}
 	}
 	
 }

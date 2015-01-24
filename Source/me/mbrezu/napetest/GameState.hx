@@ -166,9 +166,9 @@ class GameState
 		enemies.push(es);
 	}
 	
-	public function handleKeyboardState(ks: KeyboardState) {
+	public function handleKeyboardState(ks: KeyboardState, role: String) {
 		dualShip.preKeyUp();
-		keys.copyFrom(ks);
+		keys.copyFrom(ks, role);
 		dualShip.postKeyUp();
 	}
 

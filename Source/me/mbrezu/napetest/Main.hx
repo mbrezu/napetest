@@ -55,6 +55,7 @@ import openfl.events.KeyboardEvent;
 import openfl.text.TextField;
 import openfl.text.TextFieldAutoSize;
 import me.mbrezu.haxisms.Json;
+import openfl.text.TextFieldType;
 
 #if neko
 import neko.vm.Thread;
@@ -87,7 +88,8 @@ class ServerState implements IServerState {
 		var js = Js.parse(new StringReader(command));
 		if (js.obj.get("type").str == "keyboard") {
 			var ks = KeyboardState.fromJson(js.obj.get("arg"));
-			gs.handleKeyboardState(ks);
+			var role = js.obj.get("id").str;
+			gs.handleKeyboardState(ks, role);
 		}
 		return null;
 	}
@@ -146,9 +148,11 @@ class Main extends Sprite {
 	private static inline var UPDATES_PORT = 12568;
 	
 	public static var message: String;
-	var server: Server;
-	var client: Client;
-	var keys: KeyboardState;
+	private var server: Server;
+	private var client: Client;
+	private var keys: KeyboardState;
+	private var txtRole: TextField;
+	private var txtIpAddress: TextField;
 	
 	private function sendKeyboardCommand() {
 		var map = new Map<String, JsonValue>();
@@ -165,9 +169,10 @@ class Main extends Sprite {
 	}
 	
 	private function sendCommand(js: JsonValue) {
+		js.obj.set("id", Js.str(txtRole.text));
 		if (client != null) {
 			var text = Js.stringify(js);
-			//trace('sending command: $text');
+			trace('sending command: $text');
 			client.sendCommand(text);
 		}
 	}
@@ -192,11 +197,36 @@ class Main extends Sprite {
 		var btnClient = new Button("Client", function() {
 			if (client == null) {
 				var clientState = new ClientState(Thread.current(), m);
-				client = new Client("127.0.0.1", COMMANDS_PORT, UPDATES_PORT, clientState);
+				client = new Client(txtIpAddress.text, COMMANDS_PORT, UPDATES_PORT, clientState);
 				clientState.client = client;
 			}			
 		});
-		btnClient.x = 200;
+		
+		txtIpAddress = new TextField();
+		txtIpAddress.type = TextFieldType.INPUT;
+		txtIpAddress.text = "127.0.0.1";
+		txtIpAddress.scaleX = txtIpAddress.scaleY = 2;
+		txtIpAddress.border = true;
+		txtIpAddress.borderColor = 0;
+		txtIpAddress.x = 200;
+		txtIpAddress.multiline = false;
+		txtIpAddress.height = btnClient.height / 2;
+		txtIpAddress.width = 150;
+		addChild(txtIpAddress);
+		
+		txtRole = new TextField();
+		txtRole.type = TextFieldType.INPUT;
+		txtRole.text = "1";
+		txtRole.scaleX = txtRole.scaleY = 2;
+		txtRole.border = true;
+		txtRole.borderColor = 0;
+		txtRole.x = 400;
+		txtRole.multiline = false;
+		txtRole.height = btnClient.height / 2;
+		txtRole.width = 150;
+		addChild(txtRole);
+		
+		btnClient.x = 600;
 		addChild(btnClient);
 		
 		keys = new KeyboardState();
@@ -223,6 +253,6 @@ class Main extends Sprite {
 				var js = Js.parse(new StringReader(message));
 				new Data(js).draw(graphics);					
 			}
-		});		
+		});
 	}
 }
