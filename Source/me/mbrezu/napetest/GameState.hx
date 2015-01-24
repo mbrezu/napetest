@@ -165,6 +165,12 @@ class GameState
 	public function addEnemyShip(es: EnemyShip) {
 		enemies.push(es);
 	}
+	
+	public function handleKeyboardState(ks: KeyboardState) {
+		dualShip.preKeyUp();
+		keys.copyFrom(ks);
+		dualShip.postKeyUp();
+	}
 
 	public function update() {
 		var deltaTime = tm.getDeltaTime();

@@ -51,6 +51,7 @@ import openfl.display.Sprite;
 import nape.geom.Vec2;
 import openfl.events.Event;
 import openfl.events.MouseEvent;
+import openfl.events.KeyboardEvent;
 import openfl.text.TextField;
 import openfl.text.TextFieldAutoSize;
 import me.mbrezu.haxisms.Json;
@@ -82,6 +83,12 @@ class ServerState implements IServerState {
 	}
 	
 	public function handleCommand(command: String): String {
+		trace(command);
+		var js = Js.parse(new StringReader(command));
+		if (js.obj.get("type").str == "keyboard") {
+			var ks = KeyboardState.fromJson(js.obj.get("arg"));
+			gs.handleKeyboardState(ks);
+		}
 		return null;
 	}
 	
@@ -139,6 +146,31 @@ class Main extends Sprite {
 	private static inline var UPDATES_PORT = 12568;
 	
 	public static var message: String;
+	var server: Server;
+	var client: Client;
+	var keys: KeyboardState;
+	
+	private function sendKeyboardCommand() {
+		var map = new Map<String, JsonValue>();
+		map["type"] = Js.str("keyboard");
+		map["arg"] = keys.toJson();
+		sendCommand(Js.obj(map));
+	}
+	
+	private function sendKeepAliveCommand() {
+		var map = new Map<String, JsonValue>();
+		map["type"] = Js.str("keepAlive");
+		map["arg"] = Js.nil;
+		sendCommand(Js.obj(map));		
+	}
+	
+	private function sendCommand(js: JsonValue) {
+		if (client != null) {
+			var text = Js.stringify(js);
+			trace('sending command: $text');
+			client.sendCommand(text);
+		}
+	}
 	
 	public function new () {
 		
@@ -146,8 +178,6 @@ class Main extends Sprite {
 		
 		var w = stage.stageWidth;
 		var h = stage.stageHeight;
-		var server = null;
-		var client = null;
 		
 		var m = new Mutex();
 		
@@ -169,7 +199,20 @@ class Main extends Sprite {
 		btnClient.x = 200;
 		addChild(btnClient);
 		
-		stage.addEventListener(Event.ENTER_FRAME, function(e) {
+		keys = new KeyboardState();
+		
+		stage.addEventListener(KeyboardEvent.KEY_DOWN, function (evt) {
+			keys.handleKeyDown(evt);
+			sendKeyboardCommand();
+		});
+		
+		stage.addEventListener(KeyboardEvent.KEY_UP, function (evt) {
+			keys.handleKeyUp(evt);
+			sendKeyboardCommand();
+		});
+
+		stage.addEventListener(Event.ENTER_FRAME, function(e) {			
+			sendKeepAliveCommand();
 			var message: String = null;
 			m.acquire();
 			message = Main.message;
@@ -180,6 +223,6 @@ class Main extends Sprite {
 				var js = Js.parse(new StringReader(message));
 				new Data(js).draw(graphics);					
 			}
-		});
+		});		
 	}
 }

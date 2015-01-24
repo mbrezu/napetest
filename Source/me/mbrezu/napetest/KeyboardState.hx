@@ -22,6 +22,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package me.mbrezu.napetest;
+import me.mbrezu.haxisms.Json;
 import me.mbrezu.napetest.KeyboardState.KeySet;
 import openfl.events.Event;
 import openfl.events.KeyboardEvent;
@@ -35,6 +36,28 @@ class KeySet {
 		leftPressed = false;
 		rightPressed = false;
 		firePressed = false;
+	}
+	
+	public function toJson(): JsonValue {
+		var map = new Map<String, JsonValue>();
+		map["left"] = Js.bool(leftPressed);
+		map["right"] = Js.bool(rightPressed);
+		map["fire"] = Js.bool(firePressed);
+		return Js.obj(map);
+	}
+	
+	public static function fromJson(js: JsonValue) {
+		var result = new KeySet();
+		result.leftPressed = js.obj.get("left").bool;
+		result.rightPressed = js.obj.get("right").bool;
+		result.firePressed = js.obj.get("fire").bool;
+		return result;
+	}
+	
+	public function copyFrom(other: KeySet) {
+		leftPressed = other.leftPressed;
+		rightPressed = other.rightPressed;
+		firePressed = other.firePressed;
 	}
 }
 
@@ -78,7 +101,23 @@ class KeyboardState
 	
 	public function handleKeyUp(e: KeyboardEvent) {
 		trace(e.keyCode);
-		setKeys(e, false);
+		setKeys(e, false);		
+	}
+	
+	public function toJson(): JsonValue {
+		return Js.arr([keySet1.toJson(), keySet2.toJson()]);
+	}
+	
+	public static function fromJson(js: JsonValue) {
+		var result = new KeyboardState();
+		result.keySet1 = KeySet.fromJson(js.arr[0]);
+		result.keySet2 = KeySet.fromJson(js.arr[1]);
+		return result;
+	}
+	
+	public function copyFrom(other: KeyboardState) {
+		keySet1.copyFrom(other.keySet1);
+		keySet2.copyFrom(other.keySet2);
 	}
 	
 }
