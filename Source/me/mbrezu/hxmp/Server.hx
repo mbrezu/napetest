@@ -139,11 +139,11 @@ class Server
 			}
 			case Quit: {
 				broadcastUpdate(UpdateMessage.Quit, updaters);
-				return true;
+				return false;
 			}
 			case RemoveThread(thread): {
 				updaters.remove(thread);
-				return updaters.length > 0;
+				return return true;
 			}
 		}
 	}
