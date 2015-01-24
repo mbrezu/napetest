@@ -23,6 +23,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package me.mbrezu.napetest.view;
 import me.mbrezu.haxisms.Json.JsonValue;
+import openfl._v2.text.TextField;
 import openfl.display.Graphics;
 
 class Bullet {
@@ -42,12 +43,16 @@ class Ship {
 	public var x: Float;
 	public var y: Float;
 	public var isEnemy: Bool;
+	public var battery: Float;
+	public var health: Float;
 	
 	public function new(js: JsonValue, isEnemy: Bool) {
 		this.isEnemy = isEnemy;
 		var o = js.obj;
 		x = o.get("x").float;
 		y = o.get("y").float;
+		battery = o.get("battery").float;
+		health = o.get("health").float;
 	}
 }
 
@@ -55,14 +60,16 @@ class Data
 {	
 	public var bullets: Array<Bullet>;
 	public var ships: Array<Ship>;
-
-	public function new(js: JsonValue) 
+	public var score(default, null): Int;
+	
+	public function new(js: JsonValue)
 	{
 		bullets = new Array<Bullet>();
 		ships = new Array<Ship>();
 		Lambda.iter(js.obj.get("bullets").arr, function(jsBullet) { bullets.push(new Bullet(jsBullet)); } );
 		Lambda.iter(js.obj.get("enemies").arr, function(jsEnemy) { ships.push(new Ship(jsEnemy, true)); } );
 		Lambda.iter(js.obj.get("player").arr, function(jsPlayer) { ships.push(new Ship(jsPlayer, false)); } );
+		score = js.obj.get("score").int;
 		//trace("***", bullets.length, ships.length);
 	}
 	
@@ -70,13 +77,21 @@ class Data
 		g.lineStyle(1, 0);
 		for (bullet in bullets) {
 			g.beginFill(0xaabb33, 0.5);
-			g.drawCircle(bullet.x, bullet.y, bullet.radius);
+			g.drawCircle(bullet.x + 0.5, bullet.y + 0.5, bullet.radius);
 			g.endFill();
 		}
 		for (ship in ships) {			
-			g.beginFill(if (ship.isEnemy) 0xaa3344 else 0x44bb33, 0.5);
-			g.drawRect(ship.x - 40, ship.y - 40, 80, 80);
+			g.beginFill(if (ship.isEnemy) 0xaa3344 else 0x44bb33, 0.5);			
+			g.drawRect(ship.x - 40 + 0.5, ship.y - 40 + 0.5, 80, 80);
 			g.endFill();
+			if (!ship.isEnemy) {
+				g.beginFill(0xaa5533, 0.75);
+				g.drawRect(ship.x - 10 + 0.5, ship.y - ship.battery * 4 + 0.5, 20, ship.battery * 4);
+				g.endFill();
+				g.beginFill(0xaabb33, 0.75);
+				g.drawRect(ship.x - 10 + 0.5, ship.y + 0.5, 20, ship.health * 8);
+				g.endFill();
+			}
 		}
 	}
 	

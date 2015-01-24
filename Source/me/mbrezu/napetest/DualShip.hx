@@ -40,7 +40,12 @@ class DualShip
 		this.shipRight = shipRight;
 	}
 	
+	private function dist() {
+		return Math.abs(shipLeft.body.position.x - shipRight.body.position.x);
+	}
+	
 	public function update(deltaTime: Float) {
+		var oldDist = this.dist();
 		shipLeft.update(deltaTime);
 		shipRight.update(deltaTime);
 		var posLeft = shipLeft.body.position;
@@ -63,6 +68,11 @@ class DualShip
 			shipLeft.body.position = new Vec2(posLeft.x - dtrLeft, posLeft.y);
 			shipRight.body.position = new Vec2(posRight.x + dtrRight, posRight.y);
 		}
+		var newDist = this.dist();
+		if (newDist < oldDist) {
+			shipLeft.chargeBattery();
+			shipRight.chargeBattery();
+		}
 	}
 	
 	public function preKeyUp() {
@@ -77,6 +87,15 @@ class DualShip
 	
 	public function toJson(): JsonValue {
 		return Js.arr([ shipLeft.toJson(), shipRight.toJson() ]);
+	}
+	
+	public function someoneDied() {
+		return shipLeft.dead() || shipRight.dead();
+	}
+	
+	public function fullHealth() {
+		shipLeft.fullHealth();
+		shipRight.fullHealth();
 	}
 	
 }

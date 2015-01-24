@@ -63,6 +63,7 @@ class GameState
 	private var tm: TimeManager;
 	private var newTargetCd: Cooldown;
 	private var r: Random;
+	private var score: Int;
 	
 	private var keys: KeyboardState;
 
@@ -70,6 +71,8 @@ class GameState
 	{
 		this.w = w;
 		this.h = h;
+		
+		score = 0;
 				
 		tm = new TimeManager();
 		newTargetCd = new Cooldown(1).hot();
@@ -124,6 +127,7 @@ class GameState
 			space.bodies.remove(getBody(ih.int1));
 			bullets.remove(getBody(ih.int1).userData.bullet);
 			removeEnemy(getBody(ih.int2));
+			score += 10;
 		});
 		space.listeners.add(targetBulletListener);
 		
@@ -139,6 +143,10 @@ class GameState
 			bullets.remove(getBody(ih.int1).userData.bullet);
 			space.bodies.remove(getBody(ih.int1));
 			getBody(ih.int2).userData.ship.hit();
+			if (dualShip.someoneDied()) {
+				score = 0;
+				dualShip.fullHealth();
+			}
 		});
 		space.listeners.add(playerBulletListener);
 		
@@ -219,6 +227,7 @@ class GameState
 		map["enemies"] = Js.arr(Lambda.array(Lambda.map(enemies, function(enemy) { return enemy.toJson(); } )));
 		map["bullets"] = Js.arr(Lambda.array(Lambda.map(bullets, function(bullet) { return bullet.toJson(); } )));
 		map["player"] = dualShip.toJson();
+		map["score"] = Js.int(score);
 		return Js.obj(map);
 	}
 	

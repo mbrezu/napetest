@@ -72,8 +72,10 @@ class EnemyShip
 	
 	public function toJson(): JsonValue {
 		var map = new Map<String, JsonValue>();
-		map["x"] = Js.float(Std.int(body.position.x));
-		map["y"] = Js.float(Std.int(body.position.y));
+		map["x"] = Js.int(Std.int(body.position.x));
+		map["y"] = Js.int(Std.int(body.position.y));
+		map["battery"] = Js.int(0);
+		map["health"] = Js.int(0);
 		return Js.obj(map);
 	}	
 }

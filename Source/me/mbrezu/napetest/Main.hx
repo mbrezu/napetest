@@ -216,7 +216,7 @@ class Main extends Sprite {
 		
 		txtRole = new TextField();
 		txtRole.type = TextFieldType.INPUT;
-		txtRole.text = "1";
+		txtRole.text = "3";
 		txtRole.scaleX = txtRole.scaleY = 2;
 		txtRole.border = true;
 		txtRole.borderColor = 0;
@@ -225,9 +225,20 @@ class Main extends Sprite {
 		txtRole.height = btnClient.height / 2;
 		txtRole.width = 150;
 		addChild(txtRole);
-		
+			
 		btnClient.x = 600;
 		addChild(btnClient);
+		
+		var txtScore = new TextField();
+		txtScore.text = "0";
+		txtScore.scaleX = txtScore.scaleY = 2;
+		txtScore.border = true;
+		txtScore.borderColor = 0;
+		txtScore.x = 750;
+		txtScore.multiline = false;
+		txtScore.height = btnClient.height / 2;
+		txtScore.width = 150;
+		addChild(txtScore);
 		
 		keys = new KeyboardState();
 		
@@ -251,7 +262,9 @@ class Main extends Sprite {
 				//trace(message.length);
 				graphics.clear();
 				var js = Js.parse(new StringReader(message));
-				new Data(js).draw(graphics);					
+				var data = new Data(js);
+				data.draw(graphics);				
+				txtScore.text = Std.string(data.score);
 			}
 		});
 	}
