@@ -83,7 +83,7 @@ class ServerState implements IServerState {
 	}
 	
 	public function handleCommand(command: String): String {
-		trace(command);
+		//trace(command);
 		var js = Js.parse(new StringReader(command));
 		if (js.obj.get("type").str == "keyboard") {
 			var ks = KeyboardState.fromJson(js.obj.get("arg"));
@@ -167,7 +167,7 @@ class Main extends Sprite {
 	private function sendCommand(js: JsonValue) {
 		if (client != null) {
 			var text = Js.stringify(js);
-			trace('sending command: $text');
+			//trace('sending command: $text');
 			client.sendCommand(text);
 		}
 	}
@@ -218,7 +218,7 @@ class Main extends Sprite {
 			message = Main.message;
 			m.release();
 			if (message != null) {
-				trace(message.length);
+				//trace(message.length);
 				graphics.clear();
 				var js = Js.parse(new StringReader(message));
 				new Data(js).draw(graphics);					

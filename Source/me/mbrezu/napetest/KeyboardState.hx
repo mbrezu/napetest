@@ -100,7 +100,7 @@ class KeyboardState
 	}
 	
 	public function handleKeyUp(e: KeyboardEvent) {
-		trace(e.keyCode);
+		//trace(e.keyCode);
 		setKeys(e, false);		
 	}
 	
