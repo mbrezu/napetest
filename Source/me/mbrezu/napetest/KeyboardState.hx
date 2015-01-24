@@ -116,7 +116,10 @@ class KeyboardState
 	}
 	
 	public function copyFrom(other: KeyboardState, role: String) {
-		if (role == "1") {
+		if (role == "3") {
+			keySet1.copyFrom(other.keySet1);
+			keySet2.copyFrom(other.keySet2);
+		} else if (role == "1") {
 			keySet1.copyFrom(other.keySet1);
 		} else {
 			keySet2.copyFrom(other.keySet2);
