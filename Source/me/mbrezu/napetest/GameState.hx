@@ -75,7 +75,7 @@ class GameState
 		score = 0;
 				
 		tm = new TimeManager();
-		newTargetCd = new Cooldown(1).hot();
+		newTargetCd = new Cooldown(Config.getInstance().enemyAppearInterval).hot();
 		r = new Random();
 		
 		keys = pkeys;
@@ -185,7 +185,9 @@ class GameState
 		newTargetCd.update(deltaTime);
 		if (newTargetCd.isCool()) {
 			newTargetCd.hot();			
-			addEnemyShip(new EnemyShip(60, r.float(50, h - 150), r.float(100, 1000), 0, this));
+			var cfg = Config.getInstance();
+			var speedX = r.float(cfg.enemyMinSpeed, cfg.enemyMaxSpeed);
+			addEnemyShip(new EnemyShip(60, r.float(50, h - 150), speedX, 0, this));
 		}
 
 		for (enemy in enemies) {

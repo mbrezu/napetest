@@ -1,0 +1,21 @@
+{
+	// maximum value for the battery
+	"maxBattery": 40,
+	// minimum value for the battery
+	"minBattery": 0,
+	// firing battery cost
+	"fireCost": 1,
+	// getting hit by enemy fire battery cost
+	"hitCost": 5,
+	// base increment for battery recharnging
+	"rechargeBase": 0.1,
+	// exponent used for battery recharging
+	"rechargeExp": 2,
+	// time between spawning enemies, in seconds
+	"enemyAppearInterval": 2,
+	// time between enemy bombs, in seconds
+	"enemyFireInterval": 1,
+	// the speed of an enemy is a random value between these limits
+	"enemyMinSpeed": 100,
+	"enemyMaxSpeed": 1000
+}

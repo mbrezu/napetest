@@ -11,21 +11,21 @@
     <movie version="3" />
     <movie minorVersion="0" />
     <movie platform="NME" />
-    <movie background="FFFFFF" />
+    <movie background="#FFFFFF" />
     <movie preferredSDK=";3;" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="C:\HaxeToolkit\haxe\lib\openfl\2,2,1" />
-    <class path="C:\HaxeToolkit\haxe\lib\lime\2,0,4" />
+    <class path="C:\HaxeToolkit\haxe\lib\openfl\2,2,4" />
+    <class path="C:\HaxeToolkit\haxe\lib\lime\2,0,6" />
     <class path="C:\HaxeToolkit\haxe\lib\nape\2,0,16" />
     <class path="Source" />
-    <class path="C:\HaxeToolkit\haxe\lib\lime\2,0,4\legacy" />
+    <class path="C:\HaxeToolkit\haxe\lib\lime\2,0,6\legacy" />
     <class path="Export\windows\neko\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="openfl=2.2.1&#xA;lime=2.0.4&#xA;nape=2.0.16&#xA;tools=2.0.4&#xA;lime-legacy&#xA;NAPE_NO_INLINE&#xA;no-compilation&#xA;native&#xA;lime-native&#xA;openfl-native&#xA;windows&#xA;desktop" />
+    <option directives="openfl=2.2.4&#xA;lime=2.0.6&#xA;nape=2.0.16&#xA;tools=2.0.6&#xA;lime-legacy&#xA;SHOW_CONSOLE&#xA;HXCPP_STACK_TRACE&#xA;HXCPP_CHECK_POINTER&#xA;NAPE_NO_INLINE&#xA;no-compilation&#xA;HXCPP_STACK_LINE&#xA;native&#xA;HXCPP_DEBUG_LINK&#xA;lime-native&#xA;openfl-native&#xA;windows&#xA;desktop" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
@@ -51,7 +51,9 @@
   <!-- Executed before build -->
   <preBuildCommand />
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False" />
+  <postBuildCommand alwaysRun="False">c:\windows\system32\cmd.exe /C copy $(OutputDir)\config.json $(OutputDir)\Export\windows\cpp\bin\config.json
+c:\windows\system32\cmd.exe /C copy $(OutputDir)\config.json $(OutputDir)\Export\windows\neko\bin\config.json
+</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />

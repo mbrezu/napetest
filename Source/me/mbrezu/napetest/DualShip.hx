@@ -75,20 +75,22 @@ class DualShip
 		}
 		var newDist = this.dist();
 		if (newDist < oldDist) {
+			var cfg = Config.getInstance();
 			var diff = oldDist / newDist;
 			trace(diff);
-			var amount = 0.1 * diff * diff;
+			var amount = cfg.rechargeBase * Math.pow(diff, cfg.rechargeExp);
 			chargeBattery(amount);
 		}
 	}
 	
 	public function chargeBattery(amount: Float) {
+		var cfg = Config.getInstance();
 		battery += amount;
-		if (battery > 30) {
-			battery = 30;
+		if (battery > cfg.maxBattery) {
+			battery = cfg.maxBattery;
 		}
-		if (battery < 0) {
-			battery = 0;
+		if (battery < cfg.minBattery) {
+			battery = cfg.minBattery;
 		}
 	}
 	

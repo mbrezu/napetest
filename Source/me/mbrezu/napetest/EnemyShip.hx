@@ -50,7 +50,7 @@ class EnemyShip
 		context.space.bodies.add(body);
 		body.applyImpulse(new Vec2(speedX, speedY));
 		body.userData.ship = this;
-		fireCd = new Cooldown(1).hot();
+		fireCd = new Cooldown(Config.getInstance().enemyFireInterval).hot();
 	}	
 	
 	public function update(deltaTime: Float) {

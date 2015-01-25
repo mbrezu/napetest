@@ -55,15 +55,17 @@ class PlayerShip
 	}
 	
 	public function hit() {
-		if (dualShip.battery >= 5) {
-			dualShip.chargeBattery(-5);
+		var cfg = Config.getInstance();
+		if (dualShip.battery >= cfg.hitCost) {
+			dualShip.chargeBattery(-cfg.hitCost);
 		} else {
 			context.gameOver();
 		}
 	}
 	
 	private function fire() {
-		if (dualShip.battery >= 1) {
+		var cfg = Config.getInstance();
+		if (dualShip.battery >= cfg.fireCost) {
 			var bullet = new Body(BodyType.DYNAMIC, new Vec2(body.position.x, body.position.y - 40));
 			var bulletShape = new Circle(5);
 			bullet.shapes.add(bulletShape);
@@ -73,7 +75,7 @@ class PlayerShip
 			bullet.applyImpulse(new Vec2(0, -40));
 			bullet.cbTypes.add(context.cbPlayerBullet);	
 			context.addBullet(new Bullet(bullet, 5));
-			dualShip.chargeBattery(-1);
+			dualShip.chargeBattery(-cfg.fireCost);
 		}
 	}
 	
