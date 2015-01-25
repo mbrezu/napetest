@@ -1,5 +1,6 @@
 package me.mbrezu.napetest;
 
+import openfl.Assets;
 import sys.io.File;
 import me.mbrezu.haxisms.Json;
 
@@ -19,7 +20,7 @@ class Config
 	
 	private function new() 
 	{
-		var js = Js.parse(new StringReader(File.getContent("config.json")));
+		var js = Js.parse(new StringReader(Assets.getText("assets/config.json")));
 		maxBattery = js.obj.get("maxBattery").float;
 		minBattery = js.obj.get("minBattery").float;
 		fireCost = js.obj.get("fireCost").float;
