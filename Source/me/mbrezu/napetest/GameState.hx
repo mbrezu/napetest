@@ -143,10 +143,6 @@ class GameState
 			bullets.remove(getBody(ih.int1).userData.bullet);
 			space.bodies.remove(getBody(ih.int1));
 			getBody(ih.int2).userData.ship.hit();
-			if (dualShip.someoneDied()) {
-				score = 0;
-				dualShip.fullHealth();
-			}
 		});
 		space.listeners.add(playerBulletListener);
 		
@@ -220,6 +216,8 @@ class GameState
 		if (!gameIsOver) {
 			gameIsOver = true;		
 		}
+		score = 0;
+		dualShip.chargeBattery(30);
 	}
 	
 	public function toJson(): JsonValue {

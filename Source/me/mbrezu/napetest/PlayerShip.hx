@@ -36,10 +36,10 @@ class PlayerShip
 {
 	public var body(default, null): Body;
 	private var context: GameState;
-	private var health: Int;
 	private var keySet: KeySet;
 	private var oldFirePressed: Bool;
-	private var battery: Float;
+	
+	public var dualShip: DualShip;
 	
 	public function new(x: Float, y: Float, context: GameState, keys: KeySet) 
 	{
@@ -50,24 +50,20 @@ class PlayerShip
 		context.space.bodies.add(body);	
 		body.cbTypes.add(context.cbPlayer);
 		this.context = context;
-		fullHealth();
 		body.userData.ship = this;
 		this.keySet = keys;
-		battery = 10;
 	}
 	
 	public function hit() {
-		if (health > 0) {
-			health --;
-		}
-		if (health == 0) {
-			//trace("game over");
+		if (dualShip.battery >= 5) {
+			dualShip.chargeBattery(-5);
+		} else {
 			context.gameOver();
 		}
 	}
 	
 	private function fire() {
-		if (battery >= 1) {
+		if (dualShip.battery >= 1) {
 			var bullet = new Body(BodyType.DYNAMIC, new Vec2(body.position.x, body.position.y - 40));
 			var bulletShape = new Circle(5);
 			bullet.shapes.add(bulletShape);
@@ -77,7 +73,7 @@ class PlayerShip
 			bullet.applyImpulse(new Vec2(0, -40));
 			bullet.cbTypes.add(context.cbPlayerBullet);	
 			context.addBullet(new Bullet(bullet, 5));
-			battery --;
+			dualShip.chargeBattery(-1);
 		}
 	}
 	
@@ -112,24 +108,8 @@ class PlayerShip
 		var map = new Map<String, JsonValue>();
 		map["x"] = Js.int(Std.int(body.position.x));
 		map["y"] = Js.int(Std.int(body.position.y));
-		map["battery"] = Js.float(battery);
-		map["health"] = Js.float(health);
+		map["battery"] = Js.float(dualShip.battery);
 		return Js.obj(map);		
-	}
-	
-	public function chargeBattery(amount: Float) {
-		battery += amount;
-		if (battery > 10) {
-			battery = 10;
-		}
-	}
-	
-	public function dead() {
-		return health == 0;
-	}
-	
-	public function fullHealth() {
-		health = 5;
 	}
 	
 }

@@ -172,7 +172,7 @@ class Main extends Sprite {
 		js.obj.set("id", Js.str(txtRole.text));
 		if (client != null) {
 			var text = Js.stringify(js);
-			trace('sending command: $text');
+			//trace('sending command: $text');
 			client.sendCommand(text);
 		}
 	}

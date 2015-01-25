@@ -31,6 +31,8 @@ class DualShip
 	var shipRight: PlayerShip;
 	var w: Float;
 	var h: Float;
+	
+	public var battery(default, null): Float;
 
 	public function new(w: Float, h: Float, shipLeft: PlayerShip, shipRight: PlayerShip) 
 	{
@@ -38,6 +40,9 @@ class DualShip
 		this.h = h;
 		this.shipLeft = shipLeft;
 		this.shipRight = shipRight;
+		this.shipLeft.dualShip = this;
+		this.shipRight.dualShip = this;
+		this.battery = 30;
 	}
 	
 	private function dist() {
@@ -71,9 +76,19 @@ class DualShip
 		var newDist = this.dist();
 		if (newDist < oldDist) {
 			var diff = oldDist / newDist;
+			trace(diff);
 			var amount = 0.1 * diff * diff;
-			shipLeft.chargeBattery(amount);
-			shipRight.chargeBattery(amount);
+			chargeBattery(amount);
+		}
+	}
+	
+	public function chargeBattery(amount: Float) {
+		battery += amount;
+		if (battery > 30) {
+			battery = 30;
+		}
+		if (battery < 0) {
+			battery = 0;
 		}
 	}
 	
@@ -89,15 +104,6 @@ class DualShip
 	
 	public function toJson(): JsonValue {
 		return Js.arr([ shipLeft.toJson(), shipRight.toJson() ]);
-	}
-	
-	public function someoneDied() {
-		return shipLeft.dead() || shipRight.dead();
-	}
-	
-	public function fullHealth() {
-		shipLeft.fullHealth();
-		shipRight.fullHealth();
 	}
 	
 }

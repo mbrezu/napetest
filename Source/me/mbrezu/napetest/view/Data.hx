@@ -44,7 +44,6 @@ class Ship {
 	public var y: Float;
 	public var isEnemy: Bool;
 	public var battery: Float;
-	public var health: Float;
 	
 	public function new(js: JsonValue, isEnemy: Bool) {
 		this.isEnemy = isEnemy;
@@ -52,7 +51,6 @@ class Ship {
 		x = o.get("x").float;
 		y = o.get("y").float;
 		battery = o.get("battery").float;
-		health = o.get("health").float;
 	}
 }
 
@@ -86,10 +84,8 @@ class Data
 			g.endFill();
 			if (!ship.isEnemy) {
 				g.beginFill(0xaa5533, 0.75);
-				g.drawRect(ship.x - 10 + 0.5, ship.y - ship.battery * 4 + 0.5, 20, ship.battery * 4);
-				g.endFill();
-				g.beginFill(0xaabb33, 0.75);
-				g.drawRect(ship.x - 10 + 0.5, ship.y + 0.5, 20, ship.health * 8);
+				var displacement = ship.battery * 2;
+				g.drawRect(ship.x - 10 + 0.5, ship.y - displacement / 2 + 0.5, 20, displacement);
 				g.endFill();
 			}
 		}

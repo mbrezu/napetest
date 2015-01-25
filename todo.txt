@@ -13,3 +13,12 @@
 ** TODO make the aliens follow a pattern around the screen
 ** TODO boss?
 ** DONE code reorg
+** TODO rules
+*** DONE the shield and the cannon share the same battery
+    - getting hit and firing uses the battery
+    - the battery slowly discharges over time? sounds a little too
+      complicated;
+    - moving uses a bit of battery?
+    - getting hit on an empty battery will kill you
+    - both players share the same battery
+
